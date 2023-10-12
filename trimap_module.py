@@ -114,28 +114,17 @@ def trimap(image, name, size, number, erosion=False):
             print("ERROR: foreground has been entirely eroded")
             sys.exit()
 
-    dilation  = cv2.dilate(image, kernel, iterations = 1)
-
-    dilation  = np.where(dilation == 255, 127, dilation) 	## WHITE to GRAY
-    remake    = np.where(dilation != 127, 0, dilation)		## Smoothing
-    remake    = np.where(image > 127, 200, dilation)		## mark the tumor inside GRAY
-
-    remake    = np.where(remake < 127, 0, remake)		## Embelishment
-    remake    = np.where(remake > 200, 0, remake)		## Embelishment
-    remake    = np.where(remake == 200, 255, remake)		## GRAY to WHITE
-
-    #############################################
-    # Ensures only three pixel values available #
-    # TODO: Optimization with Cython            #
-    #############################################    
-    for i in range(0,row):
-        for j in range (0,col):
-            if (remake[i,j] != 0 and remake[i,j] != 255):
-                remake[i,j] = 127
+    dilation = cv2.dilate(image, kernel, iterations=1)
+    dilation[dilation == 255] = 127
+    dilation[image > 127] = 200
+    dilation[dilation < 127] = 0
+    dilation[dilation > 200] = 0
+    dilation[dilation == 200] = 255
+    dilation[(dilation != 0) & (dilation != 255)] = 127
 
     path = "./images/results/"  ## Change the directory
     new_name = '{}px_'.format(size) + name + '_{}.png'.format(number)
-    cv2.imwrite(os.path.join(path, new_name) , remake)
+    cv2.imwrite(os.path.join(path, new_name) , dilation)
 
 
 #############################################
