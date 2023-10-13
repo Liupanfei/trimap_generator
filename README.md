@@ -3,7 +3,8 @@
 ##### Keywords: Alpha Compositioning,Trimap #####
 ##### 關鍵: Alpha合成、三分圖 #####
 ##### キーワード:アルファチャンネル、マスク画像 #####
-
+## Attention
+**This project fork from [lnugraha/trimap_generator](https://github.com/lnugraha/trimap_generator).Change numpy function and than before 1000x faster.Change the logic for generate trimap.**
 ## Introduction ##
 <ul>
 <li/>In image matting, trimap estimates foreground from background by inscribing unknown region
@@ -38,18 +39,18 @@ On the other hand, <a href="https://www.codecogs.com/eqnedit.php?latex=\alpha_p"
 - [ ] **Mask Contour Module** -- create a binary mask from contour point polygon
 
 ## Examples ##
-**1 Dilating the binary image (trimap_module.py)** <br/>
-```python
-import cv2, os, sys
-from trimap_module import trimap
-
-path    = "./image/samples/seg_image.png";
-image   = extractImage(path);
-name    = "testImage";
-size    = 10; # how many pixel extension do you want to dilate
-number  = 1;  # numbering purpose 
-trimap(image, name, size, number, erosion=False)
+**1 Dilating the single binary image** <br/>
+```shell
+python trimap_module.py --single-image \
+                        --image-path ./images/practices/binary_0.png \
+                        --save-dir ./images/results/ \
+                        --dilated-size 5 \
+                        --dilated-epoch 6
 ```
+**dilated-size** * **dilated-epoch** is the size of dilated.
+
+It will dilate dilated-epoch times with the dilated-size.
+
 |**FULL IMAGE**| **MASK IMAGE**|**FOREGROUND**| **BACKGROUND**|
 |:----------:|:----------:|:----------:|:----------:|
 |![alt text](./images/examples/full_img.png)| ![alt text](./images/examples/seg_img.png) |  ![alt text](./images/examples/fg_img.png) | ![alt text](./images/examples/bg_img.png)
@@ -58,49 +59,14 @@ trimap(image, name, size, number, erosion=False)
 |**BINARY IMAGE**|**TRIMAP (10 PX)**|**TRIMAP (20 PX)**|**TRIMAP (30 PX)**|
 |:----------:|:----------:|:----------:|:----------:|
 |![alt text](./images/examples/seg_img.png)|![alt text](./images/examples/trimap.png)|![alt text](./images/examples/trimap_20.png)|![alt text](./images/examples/trimap_30.png)|
-
-**2 Handling Non-Dominant Foreground (trimap_module.py)**
-```python
-import cv2, os, sys
-from trimap_module import trimap
-path    = "./image/test_images/test_image_10.png";
-image   = extractImage(path);
-
-kernel  = np.ones( (9,9), np.uint8 ); 
-opening = unit01.morph_close(image,kernel);
-trimap(opening, "trimap_result", 10, 1, erosion=False)
+**1 Dilating the images directory** <br/>
+```shell
+python trimap_module.py --images-dir ./images/practices/ \
+                        --save-dir ./images/results/ \
+                        --dilated-size 5 \
+                        --dilated-epoch 6
 ```
-|**NOISES**|**ORIGINAL IMAGES**|**TRIMAPS PREVIOUS**|**TRIMAPS NEW**|
-|:----------|:----------:|:----------:|:----------:|
-|**Outside FG**|![alt text](./images/examples/opening.png)|![alt text](./images/examples/opening_trimap.png)|![alt text](./images/examples/opening_trimap_new.png)|
-|**Inside FG**|![alt text](./images/examples/closing.png)|![alt text](./images/examples/closing_trimap.png)|![alt text](./images/examples/closing_trimap_new.png)|
 
-**3 Impact of Eroding or Expanding Foreground (trimap_class.py)** <br/>
-```python
-import cv2, os, sys
-from trimap_class import trimap
-path    = "./image/test_images/test_image_12.png";
-image   = extractImage(path);
-    
-trimap(image, ""trimap_result, 10, 1, DEFG=Erosion, num_iter=3);
-```
-The illustration starts with zero erosion/dilation; followed with one, three, five, until eleven iterations (an increment of two). <br />
-
-<p>
-<table style="margin-left:auto;margin-right:auto;">  
-  <tr>
-  <th> Erosion </th> <th> Expansion </th>
-  </tr>
-  <tr>
-  <td> <img src = "./images/examples/erosion_effect.gif" height="200" width="200"> </td>
-  <td> <img src = "./images/examples/dilation_effect.gif" height="200" width="200"> </td>
-  </tr>
-</table>
-</p><br />
-
-
-**4 Image Processing using Feature Extraction Module (feature_extraction.py)** <br/>
-**Coming Soon**
 
 ## References ##
 1. Vikas Gupta and Shanmuganathan Raman. (2017). "Automatic Trimap Generation for Image Matting". Indian Institute of Technology, Gandhinagar, IND [download](https://arxiv.org/pdf/1707.00333.pdf)
