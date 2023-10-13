@@ -59,7 +59,8 @@ It will dilate dilated-epoch times with the dilated-size.
 |**BINARY IMAGE**|**TRIMAP (10 PX)**|**TRIMAP (20 PX)**|**TRIMAP (30 PX)**|
 |:----------:|:----------:|:----------:|:----------:|
 |![alt text](./images/examples/seg_img.png)|![alt text](./images/examples/trimap.png)|![alt text](./images/examples/trimap_20.png)|![alt text](./images/examples/trimap_30.png)|
-**1 Dilating the images directory** <br/>
+
+**2 Dilating the images directory** <br/>
 ```shell
 python trimap_module.py --images-dir ./images/practices/ \
                         --save-dir ./images/results/ \
